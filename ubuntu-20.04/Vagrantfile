@@ -1,0 +1,26 @@
+Vagrant.configure("2") do |config|
+  config.vm.box = "generic/ubuntu2004"
+  config.vm.box_version = "4.3.12"
+  config.vm.box_check_update = false
+  config.vm.box_download_insecure = true
+
+  config.vm.provider :libvirt do |libvirt|
+    libvirt.cpu_mode = "host-passthrough"
+    libvirt.cpus = 10
+
+    libvirt.memory = 1024 * 16
+
+    libvirt.storage_pool_name = "vagrant"
+  end
+
+  config.vm.provision "shell", path: "0-pre.sh"
+  config.vm.provision :reload
+
+  config.vm.provision "shell", path: "1-init.sh"
+  config.vm.provision :reload
+
+  config.vm.provision "shell", path: "9-post.sh"
+  config.vm.provision :reload
+
+  config.vm.synced_folder ".", "/vagrant", disabled: true
+end
